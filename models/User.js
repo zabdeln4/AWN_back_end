@@ -20,7 +20,7 @@ const UserSchema = new Schema({
 const AdminSchema = new Schema({
   adminID: {
     type: Schema.Types.ObjectId,
-    ref: "User"
+    ref: "users"
   },
   emain: {
     type: String,
@@ -35,7 +35,7 @@ const AdminSchema = new Schema({
 const RegisteredUserSchema = new Schema({
   regUserID: {
     type: Schema.Types.ObjectId,
-    ref: "User"
+    ref: "users"
   },
   phone: {
     type: String,
