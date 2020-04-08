@@ -10,7 +10,8 @@ const UserSchema = new Schema({
   name: {
     type: String,
     required: true
-  } /*,
+  }
+  /*,
   avatar: {
     // to take profile picture from mail
     type: String
@@ -22,13 +23,27 @@ const AdminSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "users"
   },
-  emain: {
+  name: {
     type: String,
-    required: true
+    ref: "User"
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
   },
   password: {
     type: String,
     required: true
+  },
+  adminName: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  isAdmin: {
+    type: Boolean,
+    default: true
   }
 });
 
@@ -37,13 +52,23 @@ const RegisteredUserSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "users"
   },
+  userName: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  name: {
+    type: String,
+    ref: "User"
+  },
   phone: {
     type: String,
     required: true
   },
-  emain: {
+  email: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   password: {
     type: String,
@@ -51,10 +76,15 @@ const RegisteredUserSchema = new Schema({
   },
   isBaaned: {
     type: Boolean,
-    required: true
+    default: false
   },
   rate: {
-    type: Number
+    type: Number,
+    default: 5
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false
   },
   postID: [
     // [] => means regUser has array of posts (relation 1:M)
@@ -65,15 +95,13 @@ const RegisteredUserSchema = new Schema({
   ],
   postLimit: {
     // regUser shall not exceed 4 posts per month
-    type: Number
+    type: Number,
+    default: 0
   }
 });
 
-module.exports = User = mongoose.model("users", UserSchema);
+exports.User = mongoose.model("users", UserSchema);
 
-module.exports = Admin = mongoose.model("admins", AdminSchema);
+exports.Admin = mongoose.model("admins", AdminSchema);
 
-module.exports = RegisteredUser = mongoose.model(
-  "registeredUsers",
-  RegisteredUserSchema
-);
+exports.RegisteredUser = mongoose.model("registeredUsers", RegisteredUserSchema);
