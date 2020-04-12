@@ -19,10 +19,6 @@ const UserSchema = new Schema({
 });
 
 const AdminSchema = new Schema({
-  adminID: {
-    type: Schema.Types.ObjectId,
-    ref: "User"
-  },
   avatar: { type: String },
   name: {
     type: String,
@@ -49,10 +45,6 @@ const AdminSchema = new Schema({
 });
 
 const RegisteredUserSchema = new Schema({
-  regUserID: {
-    type: Schema.Types.ObjectId,
-    ref: "User"
-  },
   avatar: { type: String },
   userName: {
     type: String,
