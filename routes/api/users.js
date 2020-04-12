@@ -7,8 +7,10 @@ const passport = require("passport");
 const User = require("../../models/User.js").RegisteredUser;
 const isEmpty = require("../../validation/is-empty");
 
-const validateRegisterUserInput = require("../../validation/register").validateRegisterUserInput;
-const validateLoginUserInput = require("../../validation/login").validateLoginUserInput;
+const validateRegisterUserInput = require("../../validation/register")
+  .validateRegisterUserInput;
+const validateLoginUserInput = require("../../validation/login")
+  .validateLoginUserInput;
 
 router.get("/test", (req, res) => res.json({ msg: "Users hahaah" }));
 
@@ -20,9 +22,13 @@ router.post("/register", (req, res) => {
 
   User.find(
     {
-      $or: [{ email: req.body.email }, { phone: req.body.phone }, { userName: req.body.userName }]
+      $or: [
+        { email: req.body.email },
+        { phone: req.body.phone },
+        { userName: req.body.userName },
+      ],
     },
-    function(err, doc) {
+    function (err, doc) {
       if (!isEmpty(doc)) {
         for (let i = 0; i < doc.length; i++) {
           // max 3 iterates
@@ -44,7 +50,7 @@ router.post("/register", (req, res) => {
         userName: req.body.userName,
         email: req.body.email,
         password: req.body.password,
-        phone: req.body.phone
+        phone: req.body.phone,
       });
 
       bcrypt.genSalt(10, (err, salt) => {
@@ -53,8 +59,8 @@ router.post("/register", (req, res) => {
           newuser.password = hash;
           newuser
             .save()
-            .then(user => res.json(user))
-            .catch(err => console.log(err));
+            .then((user) => res.json(user))
+            .catch((err) => console.log(err));
         });
       });
     }
@@ -66,16 +72,21 @@ router.post("/login", (req, res) => {
     return res.status(400).json(errors);
   }
 
-  User.findOne(logindata[0]).then(user => {
+  User.findOne(logindata[0]).then((user) => {
     if (!user) {
       return res.status(404).json({ user: "User not found !!" });
     }
-    bcrypt.compare(logindata.password, user.password).then(ismatch => {
+    bcrypt.compare(logindata.password, user.password).then((ismatch) => {
       if (ismatch) {
         const payload = { id: user.id, type: user.isAdmin };
-        jwt.sign(payload, Keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
-          res.json({ success: true, token: "Bearer " + token });
-        });
+        jwt.sign(
+          payload,
+          Keys.secretOrKey,
+          { expiresIn: 3600 },
+          (err, token) => {
+            res.json({ success: true, token: "Bearer " + token });
+          }
+        );
       } else {
         return res.status(400).json({ password: "password incorrect" });
       }
@@ -83,8 +94,12 @@ router.post("/login", (req, res) => {
   });
 });
 
-router.get("/current", passport.authenticate("jwt", { session: false }), (req, res) => {
-  res.json({ name: req.user.name });
-});
+router.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.json({ name: req.user.name });
+  }
+);
 
 module.exports = router;

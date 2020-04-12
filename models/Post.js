@@ -3,41 +3,41 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const PostSchema = new Schema({
-  postID: {
+  user: {
     type: Schema.Types.ObjectId,
-    required: true
-  },
-  status: {
-    // what is its type?
-    type: String,
-    required: true
+    ref: "users",
   },
   title: {
     type: String,
-    required: true
+    required: true,
   },
-  tags: [{ type: String }],
+  description: {
+    type: String,
+    required: true,
+  },
   location: {
-    type: String
+    type: String,
+    //required: true,
+  },
+  categoryName: {
+    type: String,
   },
   numViews: {
-    type: Number
-  },
-  numUsersOfferedHelp: {
-    type: Number
+    type: Number,
   },
   date: {
-    type: date,
-    required: true
+    type: Date,
+    default: Date.now,
   },
-  dueDate: {
-    type: date,
-    required: true
+  status: {
+    // what is its type? dont know its usage
+    type: String,
+    default: "active",
+    //required: true,
   },
-  categoryID: {
-    type: Schema.Types.ObjectId,
-    ref: "categorys"
-  }
+  tags: {
+    type: String,
+  },
 });
 
 module.exports = Post = mongoose.model("posts", PostSchema);
