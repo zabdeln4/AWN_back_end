@@ -23,6 +23,7 @@ const AdminSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User"
   },
+  avatar: { type: String },
   name: {
     type: String,
     ref: "User"
@@ -52,6 +53,7 @@ const RegisteredUserSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User"
   },
+  avatar: { type: String },
   userName: {
     type: String,
     required: true,
@@ -89,8 +91,7 @@ const RegisteredUserSchema = new Schema({
   postID: [
     // [] => means regUser has array of posts (relation 1:M)
     {
-      type: Schema.Types.ObjectId,
-      ref: "posts"
+      type: Schema.Types.ObjectId
     }
   ],
   postLimit: {

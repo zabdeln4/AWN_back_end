@@ -13,19 +13,21 @@ module.exports = passport => {
     new JwtStrategy(opts, (jwt_payload, done) => {
       if (!isEmpty(jwt_payload)) {
         if (jwt_payload.type) {
+          // if type in payload is true means that is admin
           Admin.findById(jwt_payload.id)
-            .then(admin => {
-              if (admin) {
-                return done(null, admin);
+            .then(data => {
+              if (data) {
+                return done(null, data);
               }
               return done(null, false);
             })
             .catch(err => console.log(err));
         } else {
+          // if type in payload is true means that is user
           User.findById(jwt_payload.id)
-            .then(user => {
-              if (user) {
-                return done(null, user);
+            .then(data => {
+              if (data) {
+                return done(null, data);
               }
               return done(null, false);
             })

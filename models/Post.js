@@ -3,14 +3,18 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const PostSchema = new Schema({
-  postID: {
+  _id: {
+    type: Schema.Types.ObjectId
+  },
+  regUserID: {
     type: Schema.Types.ObjectId,
     required: true
   },
   status: {
     // what is its type?
+    //active or notactive
     type: String,
-    required: true
+    default: "active"
   },
   title: {
     type: String,
@@ -21,22 +25,31 @@ const PostSchema = new Schema({
     type: String
   },
   numViews: {
-    type: Number
+    type: Number,
+    default: 0
   },
   numUsersOfferedHelp: {
-    type: Number
+    type: Number,
+    default: 0
   },
   date: {
-    type: date,
+    type: Date,
+    default: Date.now
+  },
+  /*dueDate: {
+    type: Date,
+    required: true
+  },*/
+  categorytype: {
+    //volunteer
+    //donation
+    //recycle
+    type: String,
     required: true
   },
-  dueDate: {
-    type: date,
-    required: true
-  },
-  categoryID: {
-    type: Schema.Types.ObjectId,
-    ref: "categorys"
+  reported: {
+    type: Boolean,
+    default: false
   }
 });
 
