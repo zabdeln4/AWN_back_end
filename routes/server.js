@@ -30,6 +30,7 @@ app.use("/api/posts", posts);
 app.use("/api/profiles", profiles);
 app.use("/api/users", users);
 app.use("/api/admins", admins);
+//
 
 // express doesn't consider not found 404 as an error so we need to handle 404 explicitly
 // handle 404 error
