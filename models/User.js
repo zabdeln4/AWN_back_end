@@ -19,6 +19,7 @@ const UserSchema = new Schema({
 });
 
 const AdminSchema = new Schema({
+
   avatar: { type: String },
   name: {
     type: String,
@@ -45,6 +46,7 @@ const AdminSchema = new Schema({
 });
 
 const RegisteredUserSchema = new Schema({
+
   avatar: { type: String },
   userName: {
     type: String,
