@@ -37,7 +37,9 @@ exports.validateRegisterUserInput = function(data) {
   if (Validator.isEmpty(data.password2)) {
     errors.password2 = "Confirm Password field is required";
   }
-
+  if (!Validator.isLength(data.userName, { min: 2, max: 30 })) {
+    errors.password = "User Name field must be at least 2 characters.";
+  }
   if (Validator.isEmpty(data.userName)) {
     errors.userName = "User Name field is required";
   }

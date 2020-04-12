@@ -2,8 +2,8 @@ const Validator = require("validator");
 const isEmpty = require("./is-empty");
 
 exports.validateLoginUserInput = function(data) {
-  let errors = {};
-  let logindata;
+  var errors = {};
+  var logindata;
   data.password = !isEmpty(data.password) ? data.password : "";
 
   data.email = !isEmpty(data.email) ? data.email : "";
@@ -20,18 +20,15 @@ exports.validateLoginUserInput = function(data) {
 
   if (!Validator.isEmpty(data.email) && !Validator.isEmpty(data.password)) {
     logindata = {
-      email: data.email,
-      password: data.password
+      email: data.email
     };
   } else if (!Validator.isEmpty(data.userName) && !Validator.isEmpty(data.password)) {
     logindata = {
-      userName: data.userName,
-      password: data.password
+      userName: data.userName
     };
   } else if (!Validator.isEmpty(data.phone) && !Validator.isEmpty(data.password)) {
     logindata = {
-      phone: data.phone,
-      password: data.password
+      phone: data.phone
     };
   }
 
@@ -43,8 +40,8 @@ exports.validateLoginUserInput = function(data) {
 };
 
 exports.validateLoginAdminInput = function(data) {
-  let errors = {};
-  let logindata;
+  var errors = {};
+  var logindata;
   data.password = !isEmpty(data.password) ? data.password : "";
 
   data.email = !isEmpty(data.email) ? data.email : "";
@@ -60,13 +57,11 @@ exports.validateLoginAdminInput = function(data) {
 
   if (!Validator.isEmpty(data.email) && !Validator.isEmpty(data.password)) {
     logindata = {
-      email: data.email,
-      password: data.password
+      email: data.email
     };
   } else if (!Validator.isEmpty(data.adminName) && !Validator.isEmpty(data.password)) {
     logindata = {
-      adminName: data.adminName,
-      password: data.password
+      adminName: data.adminName
     };
   }
 
