@@ -14,6 +14,7 @@ module.exports = passport => {
       if (!isEmpty(jwt_payload)) {
         if (jwt_payload.type) {
           // if type in payload is true means that is admin
+
           Admin.findById(jwt_payload.id)
             .then(data => {
               if (data) {
