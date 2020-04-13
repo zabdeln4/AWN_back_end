@@ -178,7 +178,7 @@ router.get(
   }
 );
 
-// @route   post api/posts/:postId/View
+// @route   post api/posts/View/:postId
 // @desc    Increament numViews of post by 1
 // @access  private
 router.get("/View/:postId", (req, res) => {
