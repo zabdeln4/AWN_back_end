@@ -40,16 +40,16 @@ router.get("/", (req, res) => {
 // @route   GET api/posts/all
 // @desc    Get total number of posts
 // @access  Public
-router.get("/all", (req, res) => {
+router.get("/postNums", (req, res) => {
   Post.find()
     .then((posts) => res.json(posts.length))
     .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
 });
 
 // @route   GET api/posts/:id
-// @desc    Get post by id
+// @desc    Get post by its id
 // @access  Public
-router.get("/:id", (req, res) => {
+router.get("/postid/:id", (req, res) => {
   Post.findById(req.params.id)
     .then((post) => res.json(post))
     .catch((err) =>
@@ -113,15 +113,32 @@ router.delete(
 );
 /*
 // @route   GET api/posts/:user
-// @desc    Get all post of certen user by his ID
+// @desc    Get all posts of a certen user by his ID
 // @access  private
-router.get("/:user", (req, res) => {
-  Post.find(req.params.user)
-    .then((post) => res.json(post))
-    .catch((err) =>
-      res.status(404).json({ nopostfound: "No post found with that ID" })
-    );
-});
+router.get(
+  "/user/:user",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    Post.find({ user: req.params.user })
+      .sort({ date: -1 })
+      .then((post) => res.json(post))
+      .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
+  }
+);
 */
+
+// @route   GET api/posts/userallposts
+// @desc    Get all post of the current user
+// @access  private
+router.get(
+  "/currentUser",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    Post.find({ user: req.user.id })
+      .sort({ date: -1 })
+      .then((post) => res.json(post))
+      .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
+  }
+);
 
 module.exports = router;

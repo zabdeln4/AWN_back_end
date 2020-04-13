@@ -4,11 +4,18 @@ const jwt = require("jsonwebtoken");
 const Keys = require("../../config/Keys");
 const router = express.Router();
 const passport = require("passport");
-const Admin = require("../../models/User.js").Admin;
-const isEmpty = require("../../validation/is-empty");
 
-const validateRegisterAdminInput = require("../../validation/register").validateRegisterAdminInput;
-const validateLoginAdminInput = require("../../validation/login").validateLoginAdminInput;
+const Admin = require("../../models/User.js").Admin;
+const User = require("../../models/User.js").RegisteredUser;
+const Post = require("../../models/Post.js");
+const Report = require("../../models/Report.js");
+
+const isEmpty = require("../../validation/is-empty");
+const gravatar = require("gravatar");
+const validateRegisterAdminInput = require("../../validation/register")
+  .validateRegisterAdminInput;
+const validateLoginAdminInput = require("../../validation/login")
+  .validateLoginAdminInput;
 
 router.post("/register", (req, res) => {
   const { errors, isValid } = validateRegisterAdminInput(req.body);
@@ -18,9 +25,9 @@ router.post("/register", (req, res) => {
 
   Admin.find(
     {
-      $or: [{ email: req.body.email }, { adminName: req.body.adminName }]
+      $or: [{ email: req.body.email }, { adminName: req.body.adminName }],
     },
-    function(err, doc) {
+    function (err, doc) {
       if (!isEmpty(doc)) {
         for (let i = 0; i < doc.length; i++) {
           // max 3 iterates
@@ -35,11 +42,17 @@ router.post("/register", (req, res) => {
 
         return res.status(400).json(errors);
       }
+      const avatar = gravatar.url(
+        req.body.email,
+        { s: "100", r: "x", d: "retro" },
+        true
+      );
       const newadmin = new Admin({
         name: req.body.name,
         adminName: req.body.adminName,
         email: req.body.email,
-        password: req.body.password
+        password: req.body.password,
+        avatar,
       });
 
       bcrypt.genSalt(10, (err, salt) => {
@@ -48,29 +61,35 @@ router.post("/register", (req, res) => {
           newadmin.password = hash;
           newadmin
             .save()
-            .then(admin => res.json(admin))
-            .catch(err => console.log(err));
+            .then((admin) => res.json(admin))
+            .catch((err) => console.log(err));
         });
       });
     }
   );
 });
 router.post("/login", (req, res) => {
-  let { logindata, errors, isValid } = validateLoginAdminInput(req.body);
+  var { logindata, errors, isValid } = validateLoginAdminInput(req.body);
   if (!isValid) {
     return res.status(400).json(errors);
   }
 
-  Admin.findOne(logindata[0]).then(admin => {
+  Admin.findOne(logindata).then((admin) => {
     if (!admin) {
       return res.status(404).json({ admin: "Admin not found !!" });
     }
-    bcrypt.compare(logindata.password, admin.password).then(ismatch => {
+
+    bcrypt.compare(req.body.password, admin.password).then((ismatch) => {
       if (ismatch) {
         const payload = { id: admin.id, type: admin.isAdmin };
-        jwt.sign(payload, Keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
-          res.json({ success: true, token: "Bearer " + token });
-        });
+        jwt.sign(
+          payload,
+          Keys.secretOrKey,
+          { expiresIn: 60 * 60 * 24 },
+          (err, token) => {
+            res.json({ success: true, token: "Bearer " + token });
+          }
+        );
       } else {
         return res.status(400).json({ password: "password incorrect" });
       }
@@ -78,8 +97,75 @@ router.post("/login", (req, res) => {
   });
 });
 
-router.get("/current", passport.authenticate("jwt", { session: false }), (req, res) => {
-  res.json({ name: req.admin.name });
-});
+router.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    console.log(req.user);
+    res.json(req.user);
+  }
+);
+
+router.post(
+  "/banUser",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    //req.body.userId
+    var myquery = { _id: req.body._id };
+    var newvalues = { $set: { isBaaned: true } };
+    User.updateOne(myquery, newvalues, function (err, affected) {
+      if (err) {
+        console.log("update document error");
+        res.json(err);
+      } else {
+        res.json({ msg: "User banned successfully" });
+      }
+    });
+  }
+);
+
+router.post(
+  "/removePost",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    //req.body.userId
+    var myquery = { _id: req.body._id };
+
+    Post.findByIdAndDelete(myquery)
+      .then((doc) => {
+        if (!doc) res.json({ err: "post not found " });
+        else res.json({ msg: "Post removed successfully" });
+      })
+      .catch((err) => res.json({ err: err }));
+  }
+);
+router.post(
+  "/removeReport",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    //req.body.userId
+    var myquery = { _id: req.body._id };
+
+    Report.findByIdAndDelete(myquery)
+      .then((doc) => {
+        if (!doc) res.json({ err: "Report not found " });
+        else res.json({ msg: "Report removed successfully" });
+      })
+      .catch((err) => res.json({ err: err }));
+  }
+);
+router.post(
+  "/viewReports",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    Report.find({}, function (err, result) {
+      if (err) {
+        res.json(err);
+      } else {
+        res.json(result);
+      }
+    });
+  }
+);
 
 module.exports = router;

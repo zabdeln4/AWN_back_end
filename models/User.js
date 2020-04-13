@@ -3,14 +3,10 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const UserSchema = new Schema({
-  //******************************* important comment*******************/
-  // it couses problem somehow as the password to login is always 123456
-  // no matter what you saved while register
-
-  /*userID: {
+  userID: {
     type: Schema.Types.ObjectId,
-    required: true
-  },*/
+    required: true,
+  },
   name: {
     type: String,
     required: true,
@@ -27,6 +23,7 @@ const AdminSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "users",
   },
+  avatar: { type: String },
   name: {
     type: String,
     ref: "User",
@@ -56,6 +53,7 @@ const RegisteredUserSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "users",
   },
+  avatar: { type: String },
   userName: {
     type: String,
     required: true,
@@ -94,7 +92,6 @@ const RegisteredUserSchema = new Schema({
     // [] => means regUser has array of posts (relation 1:M)
     {
       type: Schema.Types.ObjectId,
-      ref: "posts",
     },
   ],
   postLimit: {

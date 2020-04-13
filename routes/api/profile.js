@@ -10,6 +10,8 @@ const Profile = require("../../models/Profile");
 // Load User Model
 const User = require("../../models/User");
 
+const RegisteredUser = require("../../models/User").RegisteredUser;
+
 // @route   GET api/profile/test
 // @desc    Tests profile route
 // @access  Public
@@ -44,7 +46,7 @@ router.get("/all", (req, res) => {
   const errors = {};
 
   Profile.find()
-    .populate("user", "name")
+    .populate("user", ["name", "avatar"])
     .then((profile) => {
       if (!profile) {
         errors.noprofile = "There are no profiles";
@@ -151,7 +153,7 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     Profile.findOneAndRemove({ user: req.user.id }).then(() => {
-      User.findOneAndRemove({ _id: req.user.id }).then(() =>
+      RegisteredUser.findOneAndRemove({ _id: req.user.id }).then(() =>
         res.json({ success: true })
       );
     });

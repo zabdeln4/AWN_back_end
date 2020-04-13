@@ -1,16 +1,20 @@
 const Validator = require("validator");
 const isEmpty = require("./is-empty");
 
-exports.validateLoginUserInput = function(data) {
-  let errors = {};
-  let logindata;
+exports.validateLoginUserInput = function (data) {
+  var errors = {};
+  var logindata;
   data.password = !isEmpty(data.password) ? data.password : "";
 
   data.email = !isEmpty(data.email) ? data.email : "";
   data.userName = !isEmpty(data.userName) ? data.userName : "";
   data.phone = !isEmpty(data.phone) ? data.phone : "";
 
-  if (Validator.isEmpty(data.email) && Validator.isEmpty(data.userName) && Validator.isEmpty(data.phone)) {
+  if (
+    Validator.isEmpty(data.email) &&
+    Validator.isEmpty(data.userName) &&
+    Validator.isEmpty(data.phone)
+  ) {
     errors.email = "Email or User Name or Phone number is required";
   }
 
@@ -21,30 +25,33 @@ exports.validateLoginUserInput = function(data) {
   if (!Validator.isEmpty(data.email) && !Validator.isEmpty(data.password)) {
     logindata = {
       email: data.email,
-      password: data.password
     };
-  } else if (!Validator.isEmpty(data.userName) && !Validator.isEmpty(data.password)) {
+  } else if (
+    !Validator.isEmpty(data.userName) &&
+    !Validator.isEmpty(data.password)
+  ) {
     logindata = {
       userName: data.userName,
-      password: data.password
     };
-  } else if (!Validator.isEmpty(data.phone) && !Validator.isEmpty(data.password)) {
+  } else if (
+    !Validator.isEmpty(data.phone) &&
+    !Validator.isEmpty(data.password)
+  ) {
     logindata = {
       phone: data.phone,
-      password: data.password
     };
   }
 
   return {
     logindata,
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };
 
-exports.validateLoginAdminInput = function(data) {
-  let errors = {};
-  let logindata;
+exports.validateLoginAdminInput = function (data) {
+  var errors = {};
+  var logindata;
   data.password = !isEmpty(data.password) ? data.password : "";
 
   data.email = !isEmpty(data.email) ? data.email : "";
@@ -61,18 +68,19 @@ exports.validateLoginAdminInput = function(data) {
   if (!Validator.isEmpty(data.email) && !Validator.isEmpty(data.password)) {
     logindata = {
       email: data.email,
-      password: data.password
     };
-  } else if (!Validator.isEmpty(data.adminName) && !Validator.isEmpty(data.password)) {
+  } else if (
+    !Validator.isEmpty(data.adminName) &&
+    !Validator.isEmpty(data.password)
+  ) {
     logindata = {
       adminName: data.adminName,
-      password: data.password
     };
   }
 
   return {
     logindata,
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };
