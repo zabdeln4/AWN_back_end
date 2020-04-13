@@ -124,7 +124,7 @@ router.post(
 );
 
 // @route   DELETE api/posts/:id
-// @desc    Delete post
+// @desc    Delete post by id
 // @access  Private
 router.delete(
   "/:id",
@@ -177,5 +177,14 @@ router.get(
       .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
   }
 );
+
+// @route   post api/posts/:postId/View
+// @desc    Increament numViews of post by 1
+// @access  private
+router.get("/View/:postId", (req, res) => {
+  Post.findOneAndUpdate({ _id: req.params.postId }, { $inc: { numViews: 1 } })
+    .then((post) => res.json({ numViews: post.numViews }))
+    .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
+});
 
 module.exports = router;

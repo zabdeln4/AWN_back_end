@@ -26,6 +26,7 @@ const PostSchema = new Schema({
   },
   numViews: {
     type: Number,
+    default: 0,
   },
   date: {
     type: Date,
