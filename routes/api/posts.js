@@ -15,6 +15,7 @@ const validatePostInput = require("../../validation/post");
 // @access  Public
 router.get("/test", (req, res) => res.json({ msg: "Posts Works" }));
 
+// ******************************** Pagination *************************
 // @route   GET api/posts            ||  GET api/posts?page=..
 // @desc    Get all posts if page=0  ||  paginate posts if page>=1
 // @access  Public
@@ -36,8 +37,44 @@ router.get("/", (req, res) => {
     .then((posts) => res.json(posts))
     .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
 });
+// ******************************************************************************
 
-// @route   GET api/posts/all
+// @route   GET api/posts/donation
+// @desc    Get all posts in donation category
+// @access  Public
+router.get("/donation", (req, res) => {
+  Post.find({ categoryName: "Donation" })
+    .sort({ date: -1 })
+    .limit() // no limit for now, show all
+    .then((posts) => res.json(posts))
+    .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
+});
+
+// @route   GET api/posts/volunteering
+// @desc    Get all posts in volunteering category
+// @access  Public
+router.get("/volunteering", (req, res) => {
+  Post.find({ categoryName: "Volunteering" })
+    .sort({ date: -1 })
+    .limit() // no limit for now, show all
+    .then((posts) => res.json(posts))
+    .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
+});
+
+// @route   GET api/posts/recycling
+// @desc    Get all posts in recycling category
+// @access  Public
+router.get("/recycling", (req, res) => {
+  Post.find({ categoryName: "Recycling" })
+    .sort({ date: -1 })
+    .limit() // no limit for now, show all
+    .then((posts) => res.json(posts))
+    .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
+});
+
+// ----------------------------------------------------------------------------
+
+// @route   GET api/posts/postNums
 // @desc    Get total number of posts
 // @access  Public
 router.get("/postNums", (req, res) => {
@@ -46,7 +83,7 @@ router.get("/postNums", (req, res) => {
     .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
 });
 
-// @route   GET api/posts/:id
+// @route   GET api/posts/postid/:id
 // @desc    Get post by its id
 // @access  Public
 router.get("/postid/:id", (req, res) => {

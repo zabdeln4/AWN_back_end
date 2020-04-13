@@ -11,6 +11,7 @@ const PostSchema = new Schema({
     type: String,
     required: true,
   },
+
   description: {
     type: String,
     required: true,
@@ -21,6 +22,7 @@ const PostSchema = new Schema({
   },
   categoryName: {
     type: String,
+    required: true,
   },
   numViews: {
     type: Number,
