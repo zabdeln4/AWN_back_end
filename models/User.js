@@ -42,6 +42,10 @@ const AdminSchema = new Schema({
   isAdmin: {
     type: Boolean,
     default: true
+  },
+  numberofAssignedReport: {
+    type: Number,
+    default: 0
   }
 });
 
