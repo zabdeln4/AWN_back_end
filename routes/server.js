@@ -13,11 +13,13 @@ const admins = require("./api/admins");
 const cors = require("cors");
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
+
 const db = require("../config/Keys").mongoURI;
 mongoose.set("useCreateIndex", true);
+mongoose.set("useFindAndModify", false);
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB connected"))
