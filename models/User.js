@@ -19,11 +19,9 @@ const UserSchema = new Schema({
 });
 
 const AdminSchema = new Schema({
-
   avatar: { type: String },
   name: {
-    type: String,
-    ref: "User"
+    type: String
   },
   email: {
     type: String,
@@ -42,11 +40,14 @@ const AdminSchema = new Schema({
   isAdmin: {
     type: Boolean,
     default: true
+  },
+  numberofAssignedReport: {
+    type: Number,
+    default: 0
   }
 });
 
 const RegisteredUserSchema = new Schema({
-
   avatar: { type: String },
   userName: {
     type: String,
@@ -54,8 +55,7 @@ const RegisteredUserSchema = new Schema({
     unique: true
   },
   name: {
-    type: String,
-    ref: "User"
+    type: String
   },
   phone: {
     type: String,

@@ -10,17 +10,20 @@ const ReportSchema = new Schema({
     type: Boolean,
     required: true
   },
-  adminID: {
-    type: Schema.Types.ObjectId
-  },
+  adminId: { type: Schema.Types.ObjectId, required: true },
   reporterID: {
-    type: Schema.Types.ObjectId
+    type: Schema.Types.ObjectId,
+    required: true
   },
   reportedUserID: {
     type: Schema.Types.ObjectId
   },
   postID: {
     type: Schema.Types.ObjectId
+  },
+  description: {
+    type: String,
+    required: true
   }
 });
 
