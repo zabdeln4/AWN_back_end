@@ -11,22 +11,12 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  /*,
-  avatar: {
-    // to take profile picture from mail
-    type: String
-  }*/
 });
 
 const AdminSchema = new Schema({
-  adminID: {
-    type: Schema.Types.ObjectId,
-    ref: "users",
-  },
   avatar: { type: String },
   name: {
     type: String,
-    ref: "User",
   },
   email: {
     type: String,
@@ -46,13 +36,13 @@ const AdminSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  numberofAssignedReport: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const RegisteredUserSchema = new Schema({
-  regUserID: {
-    type: Schema.Types.ObjectId,
-    ref: "users",
-  },
   avatar: { type: String },
   userName: {
     type: String,
@@ -61,7 +51,6 @@ const RegisteredUserSchema = new Schema({
   },
   name: {
     type: String,
-    ref: "User",
   },
   phone: {
     type: String,

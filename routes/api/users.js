@@ -4,7 +4,9 @@ const jwt = require("jsonwebtoken");
 const Keys = require("../../config/Keys");
 const router = express.Router();
 const passport = require("passport");
-const User = require("../../models/User").RegisteredUser;
+const User = require("../../models/User.js").RegisteredUser;
+const Report = require("../../models/Report");
+const Admin = require("../../models/User.js").Admin;
 const isEmpty = require("../../validation/is-empty");
 const gravatar = require("gravatar");
 const validateRegisterUserInput = require("../../validation/register")
@@ -70,7 +72,7 @@ router.post("/register", (req, res) => {
           newuser
             .save()
             .then((user) => res.json(user))
-            .catch((err) => console.log(err));
+            .catch((err) => res.json(err));
         });
       });
     }
@@ -92,7 +94,7 @@ router.post("/login", (req, res) => {
         jwt.sign(
           payload,
           Keys.secretOrKey,
-          { expiresIn: 3600 },
+          { expiresIn: 60 * 60 * 24 * 30 },
           (err, token) => {
             res.json({ user, success: true, token: "Bearer " + token });
           }
@@ -104,16 +106,86 @@ router.post("/login", (req, res) => {
   });
 });
 
-router.get(
-  "/current",
+router.get("/current", (req, res) => {
+  res.json({ ha: "succes" });
+});
+
+router.post(
+  "/reportUser",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    res.json({
-      id: req.user.id,
-      name: req.user.name,
-      email: req.user.email,
+    const newreportUser = new Report({
+      reportFlag: true,
+      reporterID: req.user.id,
+      reportedUserID: req.body.reportedUserID,
+      description: req.body.description,
     });
+    newreportUser
+      .save()
+      .then((report) => res.json(report))
+      .catch((err) => res.json(err));
+    // res.json(req.data);
   }
 );
 
+router.post(
+  "/reportPost",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    //postId + Description + token of user
+    //reportFlag false & reporterID req.user.id &
+    //check if there is report with the same reporter at the same post
+    Report.find(
+      {
+        $and: [
+          { reportFlag: false },
+          { reporterID: req.user.id },
+          { postID: req.body.postID },
+        ],
+      },
+      function (err, doc) {
+        if (!isEmpty(doc)) {
+          return res
+            .status(400)
+            .json({ msg: "your report did not reviewd yet to the admin." });
+        }
+        //get the admin to assign report to .and then save thee report
+        var admin = { numberofAssignedReport: 0 };
+        Admin.find({}, (err, admins) => {
+          if (admins.length == 0) {
+            return res
+              .status(400)
+              .json({ msg: "there is no admins in data base" });
+          }
+
+          for (var i = 0; i < admins.length; i++) {
+            if (
+              admins[i].numberofAssignedReport <= admin.numberofAssignedReport
+            ) {
+              admin = admins[i];
+            }
+          }
+          const newreportPost = new Report({
+            adminId: admin.id,
+            reportFlag: false,
+            reporterID: req.user.id,
+            postID: req.body.postID,
+            description: req.body.description,
+          });
+          newreportPost
+            .save()
+            .then(() => {
+              Admin.findOneAndUpdate(
+                { _id: admin.id },
+                { $inc: { numberofAssignedReport: 1 } },
+                (a, b) => {}
+              );
+              res.json({ msg: "reported successfully" });
+            })
+            .catch((err) => res.json(err));
+        });
+      }
+    );
+  }
+);
 module.exports = router;

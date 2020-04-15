@@ -148,8 +148,8 @@ router.delete(
     });
   }
 );
-/*
-// @route   GET api/posts/:user
+
+// @route   GET api/posts/user/:user
 // @desc    Get all posts of a certen user by his ID
 // @access  private
 router.get(
@@ -162,9 +162,8 @@ router.get(
       .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
   }
 );
-*/
 
-// @route   GET api/posts/userallposts
+// @route   GET api/posts/currentUser
 // @desc    Get all post of the current user
 // @access  private
 router.get(

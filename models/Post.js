@@ -18,7 +18,7 @@ const PostSchema = new Schema({
   },
   location: {
     type: String,
-    //required: true,
+    required: true,
   },
   categoryName: {
     type: String,

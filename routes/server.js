@@ -11,7 +11,14 @@ const posts = require("./api/posts");
 const profiles = require("./api/profile");
 const admins = require("./api/admins");
 
+////////////////////////////////////////////////
+const cors = require("cors")({ origin: "http://localhost:3000" });
+////////////////////////////////////////////////
+
 const app = express();
+app.use(bodyParser.json());
+app.use(cors);
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -48,3 +55,36 @@ app.use(function (err, req, res, next) {
 });
 const port = process.env.port || 5000;
 app.listen(port, () => console.log(`server running on port = ${port}`));
+
+////////////////////////////////////////////////////////////////
+/*
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "YOUR-DOMAIN.TLD"); // update to match the domain you will make the request from
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+*/
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  next();
+});
+/*
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  next();
+});
+*/
+////////////////////////////////////////////////////////////

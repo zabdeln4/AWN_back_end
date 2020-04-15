@@ -5,24 +5,25 @@ const Schema = mongoose.Schema;
 const ReportSchema = new Schema({
   reportFlag: {
     // what is the type
+    //User true
+    //Post false
     type: Boolean,
     required: true,
   },
-  adminID: {
-    type: Schema.Types.ObjectId,
-    ref: "admins",
-  },
+  adminId: { type: Schema.Types.ObjectId, required: true },
   reporterID: {
     type: Schema.Types.ObjectId,
-    ref: "registeredUsers",
+    required: true,
   },
   reportedUserID: {
     type: Schema.Types.ObjectId,
-    ref: "registeredUsers",
   },
   postID: {
     type: Schema.Types.ObjectId,
-    ref: "posts",
+  },
+  description: {
+    type: String,
+    required: true,
   },
 });
 
