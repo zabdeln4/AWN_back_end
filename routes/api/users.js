@@ -22,9 +22,13 @@ router.post("/register", (req, res) => {
 
   User.find(
     {
-      $or: [{ email: req.body.email }, { phone: req.body.phone }, { userName: req.body.userName }]
+      $or: [
+        { email: req.body.email },
+        { phone: req.body.phone },
+        { userName: req.body.userName },
+      ],
     },
-    function(err, doc) {
+    function (err, doc) {
       if (!isEmpty(doc)) {
         for (let i = 0; i < doc.length; i++) {
           // max 3 iterates
@@ -121,7 +125,7 @@ router.post("/reportPost", passport.authenticate("jwt", { session: false }), (re
     {
       $and: [{ reportFlag: false }, { reporterID: req.user.id }, { postID: req.body.postID }]
     },
-    function(err, doc) {
+    function (err, doc) {
       if (!isEmpty(doc)) {
         return res.status(400).json({ msg: "your report did not reviewd yet to the admin." });
       }
@@ -147,7 +151,7 @@ router.post("/reportPost", passport.authenticate("jwt", { session: false }), (re
         newreportPost
           .save()
           .then(() => {
-            Admin.findOneAndUpdate({ _id: admin.id }, { $inc: { numberofAssignedReport: 1 } }, (a, b) => {});
+            Admin.findOneAndUpdate({ _id: admin.id }, { $inc: { numberofAssignedReport: 1 } }, (a, b) => { });
             res.json({ msg: "reported successfully" });
           })
           .catch(err => res.json(err));

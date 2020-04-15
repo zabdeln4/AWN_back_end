@@ -21,9 +21,9 @@ router.post("/register", (req, res) => {
 
   Admin.find(
     {
-      $or: [{ email: req.body.email }, { adminName: req.body.adminName }]
+      $or: [{ email: req.body.email }, { adminName: req.body.adminName }],
     },
-    function(err, doc) {
+    function (err, doc) {
       if (!isEmpty(doc)) {
         for (let i = 0; i < doc.length; i++) {
           // max 3 iterates
@@ -53,8 +53,8 @@ router.post("/register", (req, res) => {
           newadmin.password = hash;
           newadmin
             .save()
-            .then(admin => res.json(admin))
-            .catch(err => console.log(err));
+            .then((admin) => res.json(admin))
+            .catch((err) => console.log(err));
         });
       });
     }
@@ -97,7 +97,7 @@ router.post("/banUser", passport.authenticate("jwt", { session: false }), (req, 
       var myquery = { _id: data.regUserID };
       var newvalues = { $set: { isBaaned: true } };
 
-      User.updateOne(myquery, newvalues, function(err, affected) {
+      User.updateOne(myquery, newvalues, function (err, affected) {
         if (err) {
           console.log("update document error");
           res.json(err);
@@ -106,7 +106,7 @@ router.post("/banUser", passport.authenticate("jwt", { session: false }), (req, 
           Report.findByIdAndDelete(myquery).then(doc => {
             if (!doc) res.json({ err: "Report not found " });
             else {
-              Admin.findOneAndUpdate({ _id: req.user.id }, { $inc: { numberofAssignedReport: -1 } }, (a, b) => {});
+              Admin.findOneAndUpdate({ _id: req.user.id }, { $inc: { numberofAssignedReport: -1 } }, (a, b) => { });
               res.json({ msg: "Report removed successfully and User banned successfully" });
             }
           });
@@ -124,14 +124,14 @@ router.post("/removeReport", passport.authenticate("jwt", { session: false }), (
     .then(doc => {
       if (!doc) res.json({ err: "Report not found " });
       else {
-        Admin.findOneAndUpdate({ _id: req.user.id }, { $inc: { numberofAssignedReport: -1 } }, (a, b) => {});
+        Admin.findOneAndUpdate({ _id: req.user.id }, { $inc: { numberofAssignedReport: -1 } }, (a, b) => { });
         res.json({ msg: "Report removed successfully" });
       }
     })
     .catch(err => res.json({ err: err }));
 });
 router.post("/viewReportedPosts", passport.authenticate("jwt", { session: false }), (req, res) => {
-  Report.find({ adminId: req.user.id }, function(err, result) {
+  Report.find({ adminId: req.user.id }, function (err, result) {
     if (err) {
       res.json(err);
     } else {

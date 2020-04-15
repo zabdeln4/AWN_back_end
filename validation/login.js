@@ -1,7 +1,7 @@
 const Validator = require("validator");
 const isEmpty = require("./is-empty");
 
-exports.validateLoginUserInput = function(data) {
+exports.validateLoginUserInput = function (data) {
   var errors = {};
   var logindata;
   data.password = !isEmpty(data.password) ? data.password : "";
@@ -10,7 +10,11 @@ exports.validateLoginUserInput = function(data) {
   data.userName = !isEmpty(data.userName) ? data.userName : "";
   data.phone = !isEmpty(data.phone) ? data.phone : "";
 
-  if (Validator.isEmpty(data.email) && Validator.isEmpty(data.userName) && Validator.isEmpty(data.phone)) {
+  if (
+    Validator.isEmpty(data.email) &&
+    Validator.isEmpty(data.userName) &&
+    Validator.isEmpty(data.phone)
+  ) {
     errors.email = "Email or User Name or Phone number is required";
   }
 
@@ -22,11 +26,17 @@ exports.validateLoginUserInput = function(data) {
     logindata = {
       email: data.email
     };
-  } else if (!Validator.isEmpty(data.userName) && !Validator.isEmpty(data.password)) {
+  } else if (
+    !Validator.isEmpty(data.userName) &&
+    !Validator.isEmpty(data.password)
+  ) {
     logindata = {
       userName: data.userName
     };
-  } else if (!Validator.isEmpty(data.phone) && !Validator.isEmpty(data.password)) {
+  } else if (
+    !Validator.isEmpty(data.phone) &&
+    !Validator.isEmpty(data.password)
+  ) {
     logindata = {
       phone: data.phone
     };
@@ -35,11 +45,11 @@ exports.validateLoginUserInput = function(data) {
   return {
     logindata,
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };
 
-exports.validateLoginAdminInput = function(data) {
+exports.validateLoginAdminInput = function (data) {
   var errors = {};
   var logindata;
   data.password = !isEmpty(data.password) ? data.password : "";
@@ -59,7 +69,10 @@ exports.validateLoginAdminInput = function(data) {
     logindata = {
       email: data.email
     };
-  } else if (!Validator.isEmpty(data.adminName) && !Validator.isEmpty(data.password)) {
+  } else if (
+    !Validator.isEmpty(data.adminName) &&
+    !Validator.isEmpty(data.password)
+  ) {
     logindata = {
       adminName: data.adminName
     };
@@ -68,6 +81,6 @@ exports.validateLoginAdminInput = function(data) {
   return {
     logindata,
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
   };
 };

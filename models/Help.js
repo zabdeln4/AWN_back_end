@@ -3,30 +3,26 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const HelpSchema = new Schema({
-  helpID: {
-    type: Schema.Types.ObjectId,
-    required: true
-  },
   date: {
     type: Date,
-    required: true
+    required: true,
   },
   helperID: {
     type: Schema.Types.ObjectId,
-    ref: "registeredUsers"
+    ref: "registeredUsers",
   },
   recipientID: {
     type: Schema.Types.ObjectId,
-    ref: "registeredUsers"
+    ref: "registeredUsers",
   },
   adminID: {
     type: Schema.Types.ObjectId,
-    ref: "admins"
+    ref: "admins",
   },
   postID: {
     type: Schema.Types.ObjectId,
-    ref: "posts"
-  }
+    ref: "posts",
+  },
 });
 
 module.exports = Help = mongoose.model("helps", HelpSchema);
