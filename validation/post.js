@@ -19,6 +19,14 @@ module.exports = function validatePostInput(data) {
     errors.description = "Description field is required";
   }
 
+  if (Validator.isEmpty(data.location)) {
+    errors.description = "Location field is required";
+  }
+
+  if (Validator.isEmpty(data.categoryName)) {
+    errors.description = "Category Name field is required";
+  }
+
   return {
     errors,
     isValid: isEmpty(errors),
