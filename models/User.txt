@@ -19,9 +19,11 @@ const UserSchema = new Schema({
 });
 
 const AdminSchema = new Schema({
+
   avatar: { type: String },
   name: {
-    type: String
+    type: String,
+    ref: "User"
   },
   email: {
     type: String,
@@ -48,6 +50,7 @@ const AdminSchema = new Schema({
 });
 
 const RegisteredUserSchema = new Schema({
+
   avatar: { type: String },
   userName: {
     type: String,
@@ -55,7 +58,8 @@ const RegisteredUserSchema = new Schema({
     unique: true
   },
   name: {
-    type: String
+    type: String,
+    ref: "User"
   },
   phone: {
     type: String,
