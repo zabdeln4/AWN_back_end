@@ -10,7 +10,6 @@ const users = require("./api/users");
 const posts = require("./api/posts");
 const profiles = require("./api/profile");
 const admins = require("./api/admins");
-const cors = require("cors");
 
 ////////////////////////////////////////////////
 const cors = require("cors")({ origin: "http://localhost:3000" });
@@ -29,7 +28,7 @@ mongoose
   .connect(db, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false,
+    useFindAndModify: false
   })
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
@@ -45,13 +44,13 @@ app.use("/api/admins", admins);
 
 // express doesn't consider not found 404 as an error so we need to handle 404 explicitly
 // handle 404 error
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
   let err = new Error("Not Found");
   err.status = 404;
   next(err);
 });
 // handle errors
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
   console.log(err);
 
   if (err.status === 404) res.status(404).json({ message: "Not found" });
@@ -71,12 +70,9 @@ app.use(function (req, res, next) {
   next();
 });
 */
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   next();
 });

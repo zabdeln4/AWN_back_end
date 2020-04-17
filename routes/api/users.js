@@ -17,16 +17,12 @@ router.get("/test", (req, res) => res.json({ msg: "Users hahaah" }));
 router.post("/register", (req, res) => {
   const { errors, isValid } = validateRegisterUserInput(req.body);
   if (!isValid) {
-    return res.status(400).json(errors);
+    return res.status(404).json(errors);
   }
 
   User.find(
     {
-      $or: [
-        { email: req.body.email },
-        { phone: req.body.phone },
-        { userName: req.body.userName },
-      ],
+      $or: [{ email: req.body.email }, { phone: req.body.phone }, { userName: req.body.userName }],
     },
     function (err, doc) {
       if (!isEmpty(doc)) {
@@ -50,7 +46,7 @@ router.post("/register", (req, res) => {
         {
           s: "200",
           r: "pg",
-          d: "mm"
+          d: "mm",
         },
         true
       );
@@ -60,7 +56,7 @@ router.post("/register", (req, res) => {
         email: req.body.email,
         password: req.body.password,
         phone: req.body.phone,
-        avatar
+        avatar,
       });
 
       bcrypt.genSalt(10, (err, salt) => {
@@ -69,8 +65,8 @@ router.post("/register", (req, res) => {
           newuser.password = hash;
           newuser
             .save()
-            .then(user => res.json(user))
-            .catch(err => res.json(err));
+            .then((user) => res.status(200).json(user))
+            .catch((err) => res.json(err));
         });
       });
     }
@@ -82,25 +78,45 @@ router.post("/login", (req, res) => {
     return res.status(400).json(errors);
   }
 
-  User.findOne(logindata).then(user => {
+  User.findOne(logindata).then((user) => {
     if (!user) {
       return res.status(404).json({ user: "User not found !!" });
     }
-    bcrypt.compare(req.body.password, user.password).then(ismatch => {
+    bcrypt.compare(req.body.password, user.password).then((ismatch) => {
       if (ismatch) {
         const payload = { id: user.id, type: user.isAdmin };
         jwt.sign(payload, Keys.secretOrKey, { expiresIn: 60 * 60 * 24 * 30 }, (err, token) => {
-          res.json({ user, success: true, token: "Bearer " + token });
+          var temp_user = {
+            userName: user.userName,
+            email: user.email,
+            phoneNumber: user.phone,
+            rate: user.rate,
+            name: user.name,
+          };
+          user = temp_user;
+          res.status(200).json({ user, success: true, token: "Bearer " + token });
         });
       } else {
-        return res.status(400).json({ password: "password incorrect" });
+        return res.status(404).json({ password: "password incorrect" });
       }
     });
   });
 });
 
-router.get("/current", (req, res) => {
-  res.json({ ha: "succes" });
+router.get("/userInfo/:id", (req, res) => {
+  User.findById(req.params.id)
+    .then((data) => {
+      if (data) {
+        return res.status(200).json({
+          username: data.userName,
+          Phonenumber: data.phone,
+          rating: data.rate,
+          email: data.email,
+        });
+      }
+      return res.status(404).json({ msg: "User not found" });
+    })
+    .catch((err) => console.log(err));
 });
 
 router.post("/reportUser", passport.authenticate("jwt", { session: false }), (req, res) => {
@@ -108,12 +124,12 @@ router.post("/reportUser", passport.authenticate("jwt", { session: false }), (re
     reportFlag: true,
     reporterID: req.user.id,
     reportedUserID: req.body.reportedUserID,
-    description: req.body.description
+    description: req.body.description,
   });
   newreportUser
     .save()
-    .then(report => res.json(report))
-    .catch(err => res.json(err));
+    .then((report) => res.json(report))
+    .catch((err) => res.json(err));
   // res.json(req.data);
 });
 
@@ -123,7 +139,7 @@ router.post("/reportPost", passport.authenticate("jwt", { session: false }), (re
   //check if there is report with the same reporter at the same post
   Report.find(
     {
-      $and: [{ reportFlag: false }, { reporterID: req.user.id }, { postID: req.body.postID }]
+      $and: [{ reportFlag: false }, { reporterID: req.user.id }, { postID: req.body.postID }],
     },
     function (err, doc) {
       if (!isEmpty(doc)) {
@@ -146,15 +162,15 @@ router.post("/reportPost", passport.authenticate("jwt", { session: false }), (re
           reportFlag: false,
           reporterID: req.user.id,
           postID: req.body.postID,
-          description: req.body.description
+          description: req.body.description,
         });
         newreportPost
           .save()
           .then(() => {
-            Admin.findOneAndUpdate({ _id: admin.id }, { $inc: { numberofAssignedReport: 1 } }, (a, b) => { });
+            Admin.findOneAndUpdate({ _id: admin.id }, { $inc: { numberofAssignedReport: 1 } }, (a, b) => {});
             res.json({ msg: "reported successfully" });
           })
-          .catch(err => res.json(err));
+          .catch((err) => res.json(err));
       });
     }
   );
