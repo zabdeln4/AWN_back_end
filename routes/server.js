@@ -10,7 +10,7 @@ const users = require("./api/users");
 const posts = require("./api/posts");
 const profiles = require("./api/profile");
 const admins = require("./api/admins");
-const cors = require("cors");
+//const cors = require("cors");
 
 ////////////////////////////////////////////////
 const cors = require("cors")({ origin: "http://localhost:3000" });
