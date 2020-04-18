@@ -175,4 +175,46 @@ router.post("/reportPost", passport.authenticate("jwt", { session: false }), (re
     }
   );
 });
+router.post("/reportPost3bdalla", (req, res) => {
+  //postId + Description + id of user
+  //reportFlag false & reporterID req.user.id &
+  //check if there is report with the same reporter at the same post
+  Report.find(
+    {
+      $and: [{ reportFlag: false }, { reporterID: req.body.id }, { postID: req.body.postID }],
+    },
+    function (err, doc) {
+      if (!isEmpty(doc)) {
+        return res.status(400).json({ msg: "your report did not reviewd yet to the admin." });
+      }
+      //get the admin to assign report to .and then save thee report
+      var admin = { numberofAssignedReport: 0 };
+      Admin.find({}, (err, admins) => {
+        if (admins.length == 0) {
+          return res.status(400).json({ msg: "there is no admins in data base" });
+        }
+
+        for (var i = 0; i < admins.length; i++) {
+          if (admins[i].numberofAssignedReport <= admin.numberofAssignedReport) {
+            admin = admins[i];
+          }
+        }
+        const newreportPost = new Report({
+          adminId: admin.id,
+          reportFlag: false,
+          reporterID: req.body.id,
+          postID: req.body.postID,
+          description: req.body.description,
+        });
+        newreportPost
+          .save()
+          .then(() => {
+            Admin.findOneAndUpdate({ _id: admin.id }, { $inc: { numberofAssignedReport: 1 } }, (a, b) => {});
+            res.json({ msg: "reported successfully" });
+          })
+          .catch((err) => res.json(err));
+      });
+    }
+  );
+});
 module.exports = router;
