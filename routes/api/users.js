@@ -167,8 +167,9 @@ router.post("/reportPost", passport.authenticate("jwt", { session: false }), (re
         newreportPost
           .save()
           .then(() => {
-            Admin.findOneAndUpdate({ _id: admin.id }, { $inc: { numberofAssignedReport: 1 } }, (a, b) => {});
-            res.json({ msg: "reported successfully" });
+            Admin.findOneAndUpdate({ _id: admin.id }, { $inc: { numberofAssignedReport: 1 } }, (a, b) => {
+              res.json({ msg: "reported successfully" });
+            });
           })
           .catch((err) => res.json(err));
       });
