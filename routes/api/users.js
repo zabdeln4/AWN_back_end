@@ -102,7 +102,27 @@ router.post("/login", (req, res) => {
     });
   });
 });
+router.post("/userChangePassword", passport.authenticate("jwt", { session: false }), (req, res) => {
+  //token + password
 
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(req.body.password, salt, (err, hash) => {
+      if (err) throw err;
+
+      var myquery = { _id: req.user._id };
+      var newvalues = { $set: { password: hash } };
+      User.updateOne(myquery, newvalues, function (err, affected) {
+        if (err) {
+          console.log("update document error");
+          return res.json(err);
+        } else {
+          console.log("password changed");
+          return res.status(200).json({ msg: "password changed" });
+        }
+      });
+    });
+  });
+});
 router.get("/userInfo/:id", (req, res) => {
   User.findById(req.params.id)
     .then((data) => {
