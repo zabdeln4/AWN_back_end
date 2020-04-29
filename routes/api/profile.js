@@ -108,10 +108,10 @@ router.post(
 // @desc    Get profile by handle
 // @access  Public
 
-router.get("/handle/:handle", (req, res) => {
+router.get("/userName/:handle", (req, res) => {
   const errors = {};
 
-  Profile.findOne({ handle: req.params.handle })
+  Profile.findOne({ userName: req.params.userName })
     .populate("user", ["name", "avatar"])
     .then((profile) => {
       if (!profile) {

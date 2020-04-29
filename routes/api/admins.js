@@ -44,7 +44,7 @@ router.post("/register", (req, res) => {
         adminName: req.body.adminName,
         email: req.body.email,
         password: req.body.password,
-        avatar,
+        avatar
       });
 
       bcrypt.genSalt(10, (err, salt) => {
@@ -66,19 +66,19 @@ router.post("/login", (req, res) => {
     return res.status(400).json(errors);
   }
 
-  Admin.findOne(logindata).then((admin) => {
+  Admin.findOne(logindata).then(admin => {
     if (!admin) {
       return res.status(404).json({ admin: "Admin not found !!" });
     }
 
-    bcrypt.compare(req.body.password, admin.password).then((ismatch) => {
+    bcrypt.compare(req.body.password, admin.password).then(ismatch => {
       if (ismatch) {
         const payload = { id: admin.id, type: admin.isAdmin };
         jwt.sign(payload, Keys.secretOrKey, { expiresIn: 60 * 60 * 24 * 30 }, (err, token) => {
-          res.status(200).json({ success: true, token: "Bearer " + token });
+          res.json({ success: true, token: "Bearer " + token });
         });
       } else {
-        return res.status(404).json({ password: "password incorrect" });
+        return res.status(400).json({ password: "password incorrect" });
       }
     });
   });
@@ -89,34 +89,31 @@ router.get("/current", passport.authenticate("jwt", { session: false }), (req, r
   res.json(req.user);
 });
 
-//@access private for admins only
-//desc (ban user ,delete the post ,remove report)
-//route api/admins/banUser
 router.post("/banUser", passport.authenticate("jwt", { session: false }), (req, res) => {
-  //reportId + token of admin
-  Report.findById(req.body.reportId)
-    .then((report_data) => {
-      Post.findById(report_data.postID).then((post_data) => {
-        var myquery = { _id: post_data.user };
-        var newvalues = { $set: { isBaaned: true } };
+  //postId + reportId + token of admin
 
-        User.updateOne(myquery, newvalues, function (err, affected) {
-          if (err) {
-            console.log("update document error");
-            return res.json(err);
-          } else {
-            Admin.findOneAndUpdate({ _id: req.user.id }, { $inc: { numberofAssignedReport: -1 } }, (a, b) => {
-              post_data.remove().then(() => {
-                report_data.remove().then(() => {
-                  res.status(200).json({ msg: "Report removed successfully and User banned successfully and post deleted" });
-                });
-              });
-            });
-          }
-        });
+  Post.findById(req.body.postId)
+    .then(data => {
+      var myquery = { _id: data.regUserID };
+      var newvalues = { $set: { isBaaned: true } };
+
+      User.updateOne(myquery, newvalues, function (err, affected) {
+        if (err) {
+          console.log("update document error");
+          res.json(err);
+        } else {
+          var myquery = { _id: req.body.reportId };
+          Report.findByIdAndDelete(myquery).then(doc => {
+            if (!doc) res.json({ err: "Report not found " });
+            else {
+              Admin.findOneAndUpdate({ _id: req.user.id }, { $inc: { numberofAssignedReport: -1 } }, (a, b) => { });
+              res.json({ msg: "Report removed successfully and User banned successfully" });
+            }
+          });
+        }
       });
     })
-    .catch((err) => console.log(err));
+    .catch(err => console.log(err));
 });
 
 router.post("/removeReport", passport.authenticate("jwt", { session: false }), (req, res) => {
@@ -124,15 +121,14 @@ router.post("/removeReport", passport.authenticate("jwt", { session: false }), (
   var myquery = { _id: req.body._id };
 
   Report.findByIdAndDelete(myquery)
-    .then((doc) => {
+    .then(doc => {
       if (!doc) res.json({ err: "Report not found " });
       else {
-        Admin.findOneAndUpdate({ _id: req.user.id }, { $inc: { numberofAssignedReport: -1 } }, (a, b) => {
-          res.status(200).json({ msg: "Report removed successfully" });
-        });
+        Admin.findOneAndUpdate({ _id: req.user.id }, { $inc: { numberofAssignedReport: -1 } }, (a, b) => { });
+        res.json({ msg: "Report removed successfully" });
       }
     })
-    .catch((err) => res.json({ err: err }));
+    .catch(err => res.json({ err: err }));
 });
 router.post("/viewReportedPosts", passport.authenticate("jwt", { session: false }), (req, res) => {
   Report.find({ adminId: req.user.id }, function (err, result) {
@@ -143,23 +139,5 @@ router.post("/viewReportedPosts", passport.authenticate("jwt", { session: false 
     }
     //console.log("haahahah");
   });
-});
-
-router.post("/removePost", passport.authenticate("jwt", { session: false }), (req, res) => {
-  // reportId +  token of admin
-
-  Report.findById(req.body.reportId)
-    .then((report_data) => {
-      Post.findById(report_data.postID).then((post_data) => {
-        Admin.findOneAndUpdate({ _id: req.user.id }, { $inc: { numberofAssignedReport: -1 } }, (a, b) => {
-          post_data.remove().then(() => {
-            report_data.remove().then(() => {
-              res.status(200).json({ msg: "Report removed successfully and User banned successfully and post deleted" });
-            });
-          });
-        });
-      });
-    })
-    .catch((err) => console.log(err));
 });
 module.exports = router;
