@@ -94,56 +94,6 @@ router.get("/postid/:id", (req, res) => {
     );
 });
 
-
-// @route   GET api/posts/allposts
-// @desc    Get all posts in all categories
-// @access  Public
-router.get("/allposts", (req, res) => {
-  Post.find()
-    .sort({ date: -1 })
-    .limit() // no limit for now, show all
-    .then((posts) => res.json(posts))
-    .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
-});
-
-// @route   GET api/posts/recycling/limit
-// @desc    Get only 30 posts in recycling category
-// @access  Public
-router.get("/recycling/limit", (req, res) => {
-  Post.find({ categoryName: "Recycling" })
-    .sort({ date: -1 })
-    .limit(30) // no limit for now, show all
-    .then((posts) => res.json(posts))
-    .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
-});
-
-
-
-// @route   GET api/posts/volunteering/limit
-// @desc    Get only 30 posts in volunteering category
-// @access  Public
-router.get("/volunteering/limit", (req, res) => {
-  Post.find({ categoryName: "Volunteering" })
-    .sort({ date: -1 })
-    .limit(30) // no limit for now, show all
-    .then((posts) => res.json(posts))
-    .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
-});
-
-
-
-// @route   GET api/posts/donation/limit
-// @desc    Get only 30 posts in donation category
-// @access  Public
-router.get("/donation/limit", (req, res) => {
-  Post.find({ categoryName: "Donation" })
-    .sort({ date: -1 })
-    .limit(30) // no limit for now, show all
-    .then((posts) => res.json(posts))
-    .catch((err) => res.status(404).json({ nopostsfound: "No posts found" }));
-});
-
-
 // @route   POST api/posts
 // @desc    Create post
 // @access  Private

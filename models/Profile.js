@@ -7,11 +7,9 @@ const ProfileSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "users",
   },
-  handle: {
-    // handle will rename as username & ref: 'registeredUsers'
+  userName: {
     type: String,
-    required: true,
-    max: 40,
+    ref: "registeredUsers",
   },
   location: {
     type: String,
