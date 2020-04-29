@@ -105,10 +105,10 @@ router.post(
 );
 
 // @route   GET api/profile/handle/:handle
-// @desc    Get profile by handle
+// @desc    Get profile by userName
 // @access  Public
 
-router.get("/userName/:handle", (req, res) => {
+router.get("/userName/:userName", (req, res) => {
   const errors = {};
 
   Profile.findOne({ userName: req.params.userName })
